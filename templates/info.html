@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crops Info Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        .custom-font {
+            font-family: 'Poppins', sans-serif; /* Apply Poppins font */
+            font-size: 2.5rem; /* Font size */
+            color: #003400; /* Text color */
+            margin-top: -30px;
+        }
+        body {
+            background-color: #f4f4f9;
+        }
+        .navbar {
+            background-color: #0d1025; /* Navbar background color */
+            height: 65px; /* Height of the navbar */
+        }
+        .navbar-brand {
+            color: #737373; /* Keep the brand color */
+        }
+        
+        .navbar-brand img {
+            width: 50px; /* Logo width */
+            height: 50px; /* Logo height */
+        }
+        .nav-link {
+            color: #ffffff; /* Text color for navbar links */
+        }
+        .nav-link:hover {
+            color: #ffcc00; /* Color on hover */
+        }
+        .card:hover {
+            transform: scale(1.05); /* Slight zoom-in effect */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25); /* Increased shadow on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="AgroAssist Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link " style="color: white;" aria-current="page" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="color: white;"href="/recommendation"><i class="fas fa-seedling"></i> Recommend</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " style="color: white;" href="/info"><i class="fas fa-chart-bar"></i> Statistics</a>
+                    </li>
+                </ul>
+                <span class="navbar-text" style="color: #737373;">AgroAssist</span> <!-- Added as a span to the right -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add this section before the iframe for the Power BI embed -->
+    <div class="container mt-3">
+        <div class="card p-3" style="background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <h3 class="text-center">Charts Description</h3><br>
+            <h5>This Power BI analysis presents average values for key agricultural parameters across various crops.</h5><br>
+            <p><strong><i class="fas fa-chart-bar"></i> 1] Nitrogen, Potassium, and Phosphorus of Crops (Bar Chart):</strong> This chart shows the average nutrient levels of various crops.</p>
+            <p><strong><i class="fas fa-thermometer-half"></i> 2] Temperature and Humidity of Crops (Scatter Plot):</strong> This plot visualizes the  average optimal temperature and humidity for different crops.</p>
+            <p><strong><i class="fas fa-flask"></i> 3] Average pH by Crop Label (Bar Chart):</strong> This chart displays the average pH values for crops, helping with soil suitability.</p>
+        </div>
+    </div>
+    <br>
+
+    <!-- Power BI Embed Section -->
+    <div class="container mt-5">
+        <h1 class="text-center custom-font">Crops Information Dashboard</h1> <!-- Apply custom class -->
+        <iframe title="crop22_powerbi" width="100%" height="600px" src="https://app.powerbi.com/view?r=eyJrIjoiYzc4YTM2NTMtZjZmNi00NDAzLTg0MzktZTY3YjQ0NzVkNTYzIiwidCI6IjBkMDRhNmQxLWFlNDctNGZjZS04MTgxLWMxYTQwNzI5MTNiYiJ9" frameborder="0" allowfullscreen="true"></iframe>
+    </div>
+
+    <!-- Optional Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>&copy; 2024 AgroAssist. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

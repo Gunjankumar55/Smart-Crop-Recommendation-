@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* Banner styling */
+        .banner {
+            background-color: #ffffff; /* Placeholder background color */
+            height: 85vh; /* 60% of viewport height */
+            width: 1500px;
+            border-radius: 10px; /* Rounded corners */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto; /* Centered with some margin */
+            max-width: 1500px; /* Maximum width for the banner */
+            box-shadow: 0 3px 15px rgba(255, 255, 255, 0.1); /* Optional shadow */
+            position: relative; /* Needed for absolute positioning of button */
+        }
+        .banner img {
+            max-width: 100%; /* Responsive image */
+            max-height: 100%; /* Prevents overflow */
+            border-radius: 20px; /* Match the banner's rounded corners */
+        }
+        .predict-button {
+            position: absolute; /* Position relative to the banner */
+            left: 350px; /* Align to the left */
+            top: 70%; /* Align vertically */
+            transform: translateY(-50%); /* Center the button vertically */
+            background-color: #003400; /* Dark green color */
+            color: rgb(255, 255, 255); /* Button text color */
+            border: none; /* Remove border */
+            text-decoration: none;
+            padding: 12px 35px; /* Button padding */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .info-section {
+            padding: 20px;
+            background-color: #f8f9fa; /* Light grey background for the info section */
+            border-radius: 10px; /* Rounded corners */
+            margin: 100px auto; /* 100px margin */
+            max-width: 1200px; /* Maximum width for the info section */
+        }
+        .info-section h3 {
+            font-weight: 600; /* Bold heading */
+            margin-bottom: 15px; /* Spacing below the heading */
+        }
+        .info-section h4 {
+            font-weight: 500; /* Medium weight for subheading */
+            margin-top: 15px; /* Spacing above the subheading */
+        }
+        .info-section p {
+            margin-bottom: 15px; /* Spacing below paragraphs */
+
+        }
+        .crop-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .crop-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .crop-image {
+            display: block;
+            margin: 0 auto;
+            width: 260px;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 9px;
+        }
+        .nav-item {
+            font-weight: 500;
+        }
+        .navbar {
+            background-color: #0d1025; /* Navbar background color */
+            height: 65px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff; /* Default text color */
+            padding: 10px 15px; /* Padding for navbar items */
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #1a1a2e; /* Background color on hover */
+            border-radius: 5px; /* Rounded corners */
+            color: #ffffff; /* Text color on hover */
+        }
+
+        .navbar-brand {
+            color: #737373; /* Color for the brand name */
+        }
+
+        .navbar-brand img {
+            width: 80px; /* Logo width */
+            height: 80px; /* Logo height */
+        }
+
+        /* Add icons to navbar items */
+        .nav-link i {
+            margin-right: 5px; /* Space between icon and text */
+        }
+    
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0d1025; padding: 10px;">
+        <div class="container-fluid">
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="AgroAssist Logo" style="width: 70px; height: 70px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active " aria-current="page" href="/"><i class="fas fa-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/recommendation"><i class="fas fa-seedling"></i> Recommend</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/info"><i class="fas fa-chart-bar"></i> Statistics</a>
+                    </li>
+                </ul>
+                <a class="navbar-brand ms-auto" style="color: #737373;">AgroAssist</a>
+            </div>
+        </div>
+    </nav>
+    
+
+    <!-- Banner Section -->
+    <div class="banner">
+        <img src="{{ url_for('static', filename='banner.png') }}" alt="Banner Image">
+        <a href="/recommendation" class="predict-button">Click to Predict →</a> <!-- Button added here -->
+    </div>
+
+    <!-- Information Section -->
+    <div class="container info-section">
+        <h3>Helping Farmers Determine the Best Crops to Plant</h3>
+        <p>This system assists farmers in selecting the most suitable crops based on soil and climate conditions.</p>
+        
+        <h4>How it Works</h4>
+        <p>Our system utilizes advanced machine learning algorithms to analyze soil and climate data, providing personalized crop recommendations. Here’s how it works:</p>
+        <ul>
+            <li><strong>Soil Analysis:</strong> The system evaluates the nutrient content in the soil, focusing on essential elements such as Nitrogen, Phosphorus, and Potassium levels.</li>
+            <li><strong>Climate Analysis:</strong> It examines various factors, including temperature, humidity, and rainfall patterns, to assess the suitability for different crops.</li>
+            <li><strong>Crop Selection:</strong> Based on the analyzed data, the system recommends the most appropriate crops for cultivation, tailored to the specific conditions of the farm.</li>
+        </ul>
+    </div>
+
+   <!-- Crop Scrolling List -->
+<h3 class="text-center mt-5">Our Crops</h3>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 crop-list mx-auto">
+            <div class="row">
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='rice.jpg') }}" class="card-img-top crop-image" alt="Rice">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Rice</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='cotton.jpg') }}" class="card-img-top crop-image" alt="Cotton">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Cotton</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='jute.jpg') }}" class="card-img-top crop-image" alt="Jute">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Jute</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='papaya.jpg') }}" class="card-img-top crop-image" alt="Papaya">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Papaya</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='maize.jpg') }}" class="card-img-top crop-image" alt="Maize">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Maize</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='moth.jpg') }}" class="card-img-top crop-image" alt="Moth Bean">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Moth Bean</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='black.jpg') }}" class="card-img-top crop-image" alt="Black Gram">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Black Gram</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='kidney.jpg') }}" class="card-img-top crop-image" alt="Kidney Beans">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Kidney Beans</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='peas.jpg') }}" class="card-img-top crop-image" alt="Pigeon Peas">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Pigeon Peas</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='pomo.jpg') }}" class="card-img-top crop-image" alt="Pomegranate">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Pomegranate</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='coffe.jpg') }}" class="card-img-top crop-image" alt="Coffee">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Coffee</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='muskmelon].jpg') }}" class="card-img-top crop-image" alt="Muskmelon">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Muskmelon</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='watermelon.jpg') }}" class="card-img-top crop-image" alt="Watermelon">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Watermelon</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='chik.jpg') }}" class="card-img-top crop-image" alt="Chickpea">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Chickpea</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='bananan.jpg') }}" class="card-img-top crop-image" alt="Banana">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Banana</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='apple.jpg') }}" class="card-img-top crop-image" alt="Apple">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Apple</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='grapes.jpg') }}" class="card-img-top crop-image" alt="Grapes">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Grapes</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='orange.jpg') }}" class="card-img-top crop-image" alt="Orange">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Orange</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='coconut.jpg') }}" class="card-img-top crop-image" alt="Coconut">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Coconut</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='mung.jpg') }}" class="card-img-top crop-image" alt="Coconut">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Mung Bean</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='mango.jpg') }}" class="card-img-top crop-image" alt="Mango">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Mango</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='lent.jpg') }}" class="card-img-top crop-image" alt="Lentil">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Lentil</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional Footer -->
+<footer class="bg-dark text-white text-center py-3 mt-5">
+    <p>&copy; 2024 AgroAssist. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+</html>

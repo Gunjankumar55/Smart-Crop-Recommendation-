@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        .navbar-brand{
+            margin-left: auto; /* Pushes the brand to the right */
+            color: #737373; /* Keep the brand color */
+        }
+
+        .nav-item{
+            font-weight: 500;
+            
+        }
+        .navbar {
+            background-color: #0d1025; /* Navbar background color */
+            height: 65px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff; /* Default text color */
+            padding: 10px 15px; /* Padding for navbar items */
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #1a1a2e; /* Background color on hover */
+            border-radius: 5px; /* Rounded corners */
+            color: #ffffff; /* Text color on hover */
+        }
+
+        .navbar-brand {
+            color: #737373; /* Color for the brand name */
+        }
+
+        .navbar-brand img {
+            width: 80px; /* Logo width */
+            height: 80px; /* Logo height */
+        }
+
+        /* Add icons to navbar items */
+        .nav-link i {
+            margin-right: 5px; /* Space between icon and text */
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0d1025; height: 65px;">
+        <div class="container-fluid">
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="AgroAssist Logo" class="me-2" style="width: 80px; height: 80px;">
+            </a>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/"><i class="fa-solid fa-house"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="color: white;" href="/recommendation"><i class="fas fa-seedling"></i>Recommend</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="color: white;" href="/info"><i class="fas fa-chart-bar"></i>Statistics</a>
+                    </li>
+                </ul>
+                <a class="navbar-brand ms-auto" style="color: #737373;">AgroAssist</a>
+            </div>
+        </div>
+    </nav>
+    
+    
+
+    <div class="container mt-5">
+        <h1 class="text-center">Crop Recommendation System</h1>
+        <form id="cropRecommendationForm" action="/recommendation" method="POST">
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <label for="Nitrogen">Nitrogen</label>
+                    <input type="number" step="0.01" id="Nitrogen" name="Nitrogen" placeholder="Enter Nitrogen" class="form-control" required value="{{ N }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="Phosporus">Phosphorus</label>
+                    <input type="number" step="0.01" id="Phosporus" name="Phosporus" placeholder="Enter Phosphorus" class="form-control" required value="{{ P }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="Potassium">Potassium</label>
+                    <input type="number" step="0.01" id="Potassium" name="Potassium" placeholder="Enter Potassium" class="form-control" required value="{{ K }}">
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <label for="Temperature">Temperature (°C)</label>
+                    <input type="number" step="0.01" id="Temperature" name="Temperature" placeholder="Enter Temperature" class="form-control" required value="{{ temp }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="Humidity">Humidity (%)</label>
+                    <input type="number" step="0.01" id="Humidity" name="Humidity" placeholder="Enter Humidity" class="form-control" required value="{{ humidity }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="Ph">pH</label>
+                    <input type="number" step="0.01" id="Ph" name="Ph" placeholder="Enter pH" class="form-control" required value="{{ ph }}">
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <label for="Rainfall">Rainfall (mm/year)</label>
+                    <input type="number" step="0.01" id="Rainfall" name="Rainfall" placeholder="Enter Rainfall" class="form-control" required value="{{ rainfall }}">
+                </div>
+                <div class="col-md-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-success">Get Recommendation</button>
+                    <button type="button" class="btn btn-danger" onclick="resetForm()">Reset</button>
+                </div>
+            </div>
+        </form>
+
+        {% if result %}
+            <div class="mt-4 alert alert-success">
+                <h4>{{ result }}</h4>
+            </div>
+        {% endif %}
+
+        <div class="alert alert-info mt-4">
+            <h5>Input Parameter Information</h5>
+            <ul>
+                <li>Nitrogen: 0 - 140 kg/ha</li>
+                <li>Phosphorus: 5 - 145 kg/ha</li>
+                <li>Potassium: 5 - 205 kg/ha</li>
+                <li>Temperature: 5 - 44 °C</li>
+                <li>Humidity: 14.26 - 100%</li>
+                <li>pH: 3.50 - 10</li>
+                <li>Rainfall: 20.21 - 300 mm/year</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>&copy; 2024 AgroAssist. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function resetForm() {
+            // Reset the form fields
+            const form = document.getElementById('cropRecommendationForm');
+            form.reset();
+    
+            // Optionally remove any values set by JavaScript templating or additional attributes
+            document.querySelectorAll('#cropRecommendationForm input').forEach(input => {
+                input.value = "";  // Explicitly clear each input
+            });
+    
+            // Hide the result message, if it exists
+            const resultElement = document.querySelector('.alert-success');
+            if (resultElement) {
+                resultElement.style.display = 'none'; // Hide the success alert
+                resultElement.innerHTML = ""; // Clear any result text
+            }
+        }
+    </script>
+    
+    
+    
+</body>
+
+</html>
